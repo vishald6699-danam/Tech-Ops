@@ -1,0 +1,21 @@
+# Build Secure 24 — Team Metadata
+# Team Composition Rule: Exactly 2 or 4 registered participants.
+# - If your team has 2 members: provide Member 1 and Member 2, and omit/delete Member 3 and 4.
+# - If your team has 4 members: provide all 4 members.
+
+team:
+  team_id: "64"
+  name: "tech ops"
+  repository: "https://github.com/charanbalaji69/Tech-Ops.git" # URL of the newly created GitHub repository for this project
+
+members:
+  - name: "DANAM VISHAL"
+    email: "vishald6699@gmail.com"
+  - name: "KETANA CHARAN BALAJI"
+    email: "charanbalaji969@gmail.com"
+  - name: "KOHIR SAKSHITH SAI "
+    email: "kohirsakshithsai@gmail.com"
+  - name: "CHALLA VISHAL"
+    email: "challavishal55@gmail.com"
+
+
