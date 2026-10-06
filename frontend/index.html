@@ -2197,13 +2197,10 @@
             if (saved && saved.trim()) {
                 return saved.trim().replace(/\/+$/, "");
             }
-            if (window.location.protocol === "file:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-                return "http://127.0.0.1:8000";
-            }
-            return window.location.origin;
+            return "https://tech-ops-a87y.onrender.com";
         }
 
-        let API = getAPIUrl();
+        let API = "https://tech-ops-a87y.onrender.com";
 
         function toggleServerSettings() {
             const el = document.getElementById("authServerSettings");
@@ -2212,7 +2209,7 @@
                 el.style.display = isOpen ? "none" : "block";
                 const input = document.getElementById("authApiUrl");
                 if (input && !isOpen) {
-                    input.value = localStorage.getItem("finance_backend_url") || (API !== "http://127.0.0.1:8000" ? API : "");
+                    input.value = localStorage.getItem("finance_backend_url") || (API !== "https://tech-ops-a87y.onrender.com" ? API : "");
                     input.focus();
                 }
             }
