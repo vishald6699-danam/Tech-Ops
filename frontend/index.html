@@ -1608,6 +1608,15 @@
 
                 </div>
 
+            <!-- CLOUD SERVER URL TOGGLE (FOR DEPLOYED ENVIRONMENTS) -->
+            <div style="margin-top: 18px; text-align: center;">
+                <span onclick="toggleServerSettings()" style="font-size: 11px; color: #717790; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='#717790'">
+                    ⚙️ Cloud Server URL
+                </span>
+                <div id="authServerSettings" style="display: none; margin-top: 10px; padding: 12px; background: rgba(0,0,0,0.35); border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);">
+                    <input type="url" id="authApiUrl" placeholder="https://your-api.onrender.com" style="margin-bottom: 8px; font-size: 12px; padding: 10px; border-radius: 10px;">
+                    <button type="button" class="primary-button" onclick="saveAuthApiUrl()" style="padding: 8px 12px; font-size: 12px; border-radius: 10px;">Save API URL</button>
+                </div>
             </div>
 
         </div>
@@ -2115,6 +2124,22 @@
                 </div>
 
 
+                <!-- CLOUD BACKEND CONNECTION SETTINGS -->
+                <div class="section">
+                    <div class="section-title">
+                        🌐 Cloud Server Connection
+                    </div>
+                    <div class="section-subtitle" style="margin-top: 4px;">
+                        Point this frontend to your deployed Render or Railway API
+                    </div>
+                    <label style="font-size: 12px; color: #9298a8; margin-top: 10px; margin-bottom: 4px; display: block;">Backend API URL</label>
+                    <input class="form-input" id="customApiUrl" type="url" placeholder="e.g. https://your-backend.onrender.com">
+                    <button class="add-button" onclick="saveCustomApiUrl()" style="margin-top: 6px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
+                        Save Server URL
+                    </button>
+                </div>
+
+
                 <button class="logout-button" onclick="logout()">
                     Logout
                 </button>
@@ -2164,13 +2189,63 @@
     <script>
 
         /* =====================================================
-           API
+           API & CLOUD DEPLOYMENT SETTINGS
         ===================================================== */
 
-        const API =
-            (window.location.protocol === "file:" || !window.location.origin || window.location.origin === "null")
-                ? "http://127.0.0.1:8000"
-                : window.location.origin;
+        function getAPIUrl() {
+            const saved = localStorage.getItem("finance_backend_url");
+            if (saved && saved.trim()) {
+                return saved.trim().replace(/\/+$/, "");
+            }
+            if (window.location.protocol === "file:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+                return "http://127.0.0.1:8000";
+            }
+            return window.location.origin;
+        }
+
+        let API = getAPIUrl();
+
+        function toggleServerSettings() {
+            const el = document.getElementById("authServerSettings");
+            if (el) {
+                const isOpen = el.style.display !== "none" && el.style.display !== "";
+                el.style.display = isOpen ? "none" : "block";
+                const input = document.getElementById("authApiUrl");
+                if (input && !isOpen) {
+                    input.value = localStorage.getItem("finance_backend_url") || (API !== "http://127.0.0.1:8000" ? API : "");
+                    input.focus();
+                }
+            }
+        }
+
+        function saveAuthApiUrl() {
+            const input = document.getElementById("authApiUrl");
+            const val = input ? input.value.trim().replace(/\/+$/, "") : "";
+            if (val) {
+                localStorage.setItem("finance_backend_url", val);
+                API = val;
+                alert("Connected to Backend: " + val);
+                toggleServerSettings();
+            } else {
+                localStorage.removeItem("finance_backend_url");
+                API = getAPIUrl();
+                alert("Reset to default API: " + API);
+            }
+        }
+
+        function saveCustomApiUrl() {
+            const input = document.getElementById("customApiUrl");
+            const val = input ? input.value.trim().replace(/\/+$/, "") : "";
+            if (val) {
+                localStorage.setItem("finance_backend_url", val);
+                API = val;
+                alert("Backend API URL saved: " + val);
+            } else {
+                localStorage.removeItem("finance_backend_url");
+                API = getAPIUrl();
+                alert("Reset to default API: " + API);
+            }
+        }
 
 
         let currentUser = null;
@@ -2349,7 +2424,7 @@
                 console.error(error);
 
                 alert(
-                    "Cannot connect to the backend.\n\nMake sure FastAPI is running."
+                    `Cannot connect to backend (${API}).\n\n• Running locally? Ensure FastAPI/uvicorn is active.\n• Deployed on Vercel/Netlify? Click '⚙️ Cloud Server URL' below to connect your Render/Railway backend.`
                 );
 
             }
@@ -2443,7 +2518,7 @@
                 console.error(error);
 
                 alert(
-                    "Cannot connect to the backend.\n\nMake sure FastAPI is running."
+                    `Cannot connect to backend (${API}).\n\n• Running locally? Ensure FastAPI/uvicorn is active.\n• Deployed on Vercel/Netlify? Click '⚙️ Cloud Server URL' below to connect your Render/Railway backend.`
                 );
 
             }
@@ -2530,6 +2605,11 @@
                 "profileAvatar"
             ).textContent =
                 initial;
+
+            const customInput = document.getElementById("customApiUrl");
+            if (customInput) {
+                customInput.value = localStorage.getItem("finance_backend_url") || "";
+            }
 
         }
 
